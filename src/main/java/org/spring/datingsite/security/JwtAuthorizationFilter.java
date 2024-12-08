@@ -26,7 +26,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         this.jwtService = jwtService;
         this.resolver = resolver;
     }
-    
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -37,13 +37,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         try {
             jwtService.verifyAccessToken(authHeader.substring(7))
                     .ifPresent(decodedJWT -> {
-                        var username = decodedJWT.getSubject();
+                        var userId = decodedJWT.getSubject();
                         var authToken = new UsernamePasswordAuthenticationToken(
-                                username, null, null
+                                userId, null, null
                         );
                         SecurityContextHolder.getContext().setAuthentication(authToken);
+                        request.setAttribute("userId", userId);
                     });
-        } catch (JWTVerificationException exception){
+        } catch (JWTVerificationException exception) {
             resolver.resolveException(request, response, null, exception);
             return;
         }

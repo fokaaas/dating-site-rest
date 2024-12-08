@@ -7,12 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@IdClass(InvitationId.class)
 @Table(name = "invitations")
-public class Invitation {
+public class Invitation extends Base {
     @EmbeddedId
     private InvitationId id;
-    
+
     @ManyToOne
     @MapsId("senderId")
     @JoinColumn(name = "sender_id", nullable = false)
@@ -22,7 +21,15 @@ public class Invitation {
     @MapsId("receiverId")
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
-    
+
     @Column(name = "is_accepted", nullable = false)
-    private boolean isAccepted = false;
+    private Boolean isAccepted = false;
+
+    public void removeSender(User sender) {
+        sender.removeSentInvitation(this);
+    }
+
+    public void removeReceiver(User receiver) {
+        receiver.removeReceivedInvitation(this);
+    }
 }
