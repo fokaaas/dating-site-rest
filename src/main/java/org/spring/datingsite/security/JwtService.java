@@ -17,9 +17,9 @@ public class JwtService {
     @Value("${jwt.issuer}")
     private String issuer;
 
-    public String createJwtToken(User user){
+    public String createJwtToken(User user) {
         return JWT.create()
-                .withSubject(user.getEmail())
+                .withSubject(user.getId().toString())
                 .withIssuer(issuer)
                 .withIssuedAt(Instant.now())
                 .sign(Algorithm.HMAC256(secret));

@@ -7,13 +7,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class User extends Base implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, updatable = false)
@@ -21,17 +24,17 @@ public class User implements UserDetails {
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
-    
+
     @Column(name = "middle_name")
     private String middleName;
 
     @Column(name = "last_name", nullable = false)
     private String lastName;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
     private Gender gender;
-    
+
     @Column(name = "photo_link")
     private String photoLink;
 
@@ -43,22 +46,22 @@ public class User implements UserDetails {
 
     @Column(name = "phone_number", nullable = false, unique = true)
     private String phoneNumber;
-    
+
     @Column(name = "telegram_link")
     private String telegramLink;
-    
+
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
-    
+
     @Column(name = "settlement", nullable = false)
     private String settlement;
-    
+
     @Column(name = "about_me")
     private String aboutMe;
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Invitation> sentInvitations;
-    
+
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Invitation> receivedInvitations;
 
@@ -70,5 +73,13 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public void removeSentInvitation(Invitation invitation) {
+        sentInvitations.remove(invitation);
+    }
+
+    public void removeReceivedInvitation(Invitation invitation) {
+        sentInvitations.remove(invitation);
     }
 }
